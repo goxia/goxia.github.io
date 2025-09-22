@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Goxia的项目展示 - 查看我的开源项目和作品集">
+    <meta name="keywords" content="Goxia, 项目展示, GitHub, 开源项目, 作品集">
+    <meta name="author" content="Goxia">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Goxia - 项目展示">
+    <meta property="og:description" content="查看Goxia的所有项目和开源作品">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://goxia.github.io/projects.html">
+    
+    <title>项目展示 - Goxia</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 项目页面特定样式 */
+        .projects-hero {
+            background: var(--bg-primary);
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+        
+        .projects-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .projects-hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-weight: 500;
+        }
+        
+        .filter-tab.active,
+        .filter-tab:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+        
+        .projects-container {
+            padding: 0 0 80px;
+        }
+        
+        .projects-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .project-card-detailed {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all var(--transition-normal);
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .project-card-detailed.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        
+        .project-card-detailed:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .project-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .project-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .project-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-secondary);
+        }
+        
+        .status-completed {
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--accent-primary);
+        }
+        
+        .status-archived {
+            background: rgba(107, 114, 128, 0.2);
+            color: var(--text-secondary);
+        }
+        
+        .project-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .project-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .project-body {
+            padding: 1.5rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tech-tag {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .project-link-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: all var(--transition-normal);
+            border: 2px solid var(--accent-primary);
+        }
+        
+        .link-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .link-primary:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .link-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+        }
+        
+        .link-secondary:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .github-stats {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .projects-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .filter-tabs {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .filter-tab {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            
+            .projects-grid-full {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Goxia</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#about" class="nav-link">关于我</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#skills" class="nav-link">技能</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">项目</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#contact" class="nav-link">联系我</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main>
+        <!-- 项目页面头部 -->
+        <section class="projects-hero">
+            <div class="container">
+                <h1>我的项目作品集</h1>
+                <p>
+                    这里展示了我在GitHub上的开源项目和个人作品。每个项目都代表着我在技术路上的探索与成长，
+                    从Web应用到工具库，从学习项目到商业应用，记录着我的技术轨迹。
+                </p>
+                
+                <!-- GitHub统计 -->
+                <div class="github-stats">
+                    <h3>GitHub 统计</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" data-target="25">0</div>
+                            <div class="stat-label">公开仓库</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" data-target="1250">0</div>
+                            <div class="stat-label">总提交数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" data-target="15">0</div>
+                            <div class="stat-label">Star 数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" data-target="8">0</div>
+                            <div class="stat-label">Fork 数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 项目展示 -->
+        <section class="projects-container">
+            <div class="container">
+                <!-- 筛选标签 -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">全部</button>
+                    <button class="filter-tab" data-filter="web">Web应用</button>
+                    <button class="filter-tab" data-filter="tool">工具库</button>
+                    <button class="filter-tab" data-filter="mobile">移动端</button>
+                    <button class="filter-tab" data-filter="backend">后端</button>
+                    <button class="filter-tab" data-filter="learning">学习项目</button>
+                </div>
+
+                <!-- 项目网格 -->
+                <div class="projects-grid-full" id="projectsGrid">
+                    <!-- Web应用项目 -->
+                    <div class="project-card-detailed" data-category="web">
+                        <div class="project-header">
+                            <div class="project-title-row">
+                                <h3 class="project-title">个人博客系统</h3>
+                                <span class="project-status status-active">Active</span>
+                            </div>
+                            <p class="project-description">
+                                基于React和Node.js构建的全栈博客系统，支持Markdown编辑、标签分类、评论互动等功能。
+                                采用现代化的UI设计，响应式布局，支持深色模式。
+                            </p>
+                            <div class="project-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>8</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span>3</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>156</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>2024-08</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="tech-stack">
+                                <span class="tech-tag">React</span>
+                                <span class="tech-tag">Node.js</span>
+                                <span class="tech-tag">Express</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">JWT</span>
+                                <span class="tech-tag">Socket.io</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link-btn link-primary" target="_blank">
+                                    <i class="fab fa-github"></i> 查看代码
+                                </a>
+                                <a href="#" class="project-link-btn link-secondary" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i> 在线预览
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 工具库项目 -->
+                    <div class="project-card-detailed" data-category="tool">
+                        <div class="project-header">
+                            <div class="project-title-row">
+                                <h3 class="project-title">前端工具库</h3>
+                                <span class="project-status status-active">Active</span>
+                            </div>
+                            <p class="project-description">
+                                一个轻量级的JavaScript工具库，提供常用的工具函数、数据处理方法和DOM操作辅助函数。
+                                支持ES6+语法，提供TypeScript声明文件。
+                            </p>
+                            <div class="project-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>12</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span>2</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>89</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>2024-07</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="tech-stack">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">TypeScript</span>
+                                <span class="tech-tag">Rollup</span>
+                                <span class="tech-tag">Jest</span>
+                                <span class="tech-tag">NPM</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link-btn link-primary" target="_blank">
+                                    <i class="fab fa-github"></i> 查看代码
+                                </a>
+                                <a href="#" class="project-link-btn link-secondary" target="_blank">
+                                    <i class="fas fa-book"></i> 查看文档
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 移动端项目 -->
+                    <div class="project-card-detailed" data-category="mobile">
+                        <div class="project-header">
+                            <div class="project-title-row">
+                                <h3 class="project-title">天气应用</h3>
+                                <span class="project-status status-completed">Completed</span>
+                            </div>
+                            <p class="project-description">
+                                使用React Native开发的跨平台天气应用，支持实时天气查询、7天预报、城市搜索等功能。
+                                集成了高德地图API和OpenWeatherMap API。
+                            </p>
+                            <div class="project-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>5</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span>1</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>67</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>2024-06</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="tech-stack">
+                                <span class="tech-tag">React Native</span>
+                                <span class="tech-tag">Expo</span>
+                                <span class="tech-tag">AsyncStorage</span>
+                                <span class="tech-tag">APIs</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link-btn link-primary" target="_blank">
+                                    <i class="fab fa-github"></i> 查看代码
+                                </a>
+                                <a href="#" class="project-link-btn link-secondary" target="_blank">
+                                    <i class="fas fa-download"></i> 下载APK
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 后端项目 -->
+                    <div class="project-card-detailed" data-category="backend">
+                        <div class="project-header">
+                            <div class="project-title-row">
+                                <h3 class="project-title">RESTful API 服务</h3>
+                                <span class="project-status status-active">Active</span>
+                            </div>
+                            <p class="project-description">
+                                基于Node.js和Express构建的RESTful API服务，提供用户认证、数据CRUD、文件上传等功能。
+                                集成了Redis缓存、JWT认证和Swagger文档。
+                            </p>
+                            <div class="project-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>6</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span>2</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>98</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>2024-09</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="tech-stack">
+                                <span class="tech-tag">Node.js</span>
+                                <span class="tech-tag">Express</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">Redis</span>
+                                <span class="tech-tag">JWT</span>
+                                <span class="tech-tag">Swagger</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link-btn link-primary" target="_blank">
+                                    <i class="fab fa-github"></i> 查看代码
+                                </a>
+                                <a href="#" class="project-link-btn link-secondary" target="_blank">
+                                    <i class="fas fa-file-code"></i> API文档
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学习项目 -->
+                    <div class="project-card-detailed" data-category="learning">
+                        <div class="project-header">
+                            <div class="project-title-row">
+                                <h3 class="project-title">算法练习集</h3>
+                                <span class="project-status status-active">Active</span>
+                            </div>
+                            <p class="project-description">
+                                LeetCode和其他算法题的解题记录，包含详细的解题思路和代码实现。
+                                支持多种编程语言，提供复杂度分析和优化方案。
+                            </p>
+                            <div class="project-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>3</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span>1</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>45</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>2024-05</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="tech-stack">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Java</span>
+                                <span class="tech-tag">算法</span>
+                                <span class="tech-tag">数据结构</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link-btn link-primary" target="_blank">
+                                    <i class="fab fa-github"></i> 查看代码
+                                </a>
+                                <a href="#" class="project-link-btn link-secondary" target="_blank">
+                                    <i class="fas fa-book-open"></i> 学习笔记
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Web项目2 -->
+                    <div class="project-card-detailed" data-category="web">
+                        <div class="project-header">
+                            <div class="project-title-row">
+                                <h3 class="project-title">在线代码编辑器</h3>
+                                <span class="project-status status-completed">Completed</span>
+                            </div>
+                            <p class="project-description">
+                                基于Monaco Editor构建的在线代码编辑器，支持多种编程语言的语法高亮、代码补全和实时预览。
+                                集成了代码格式化和主题切换功能。
+                            </p>
+                            <div class="project-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>15</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span>4</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>234</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>2024-04</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="tech-stack">
+                                <span class="tech-tag">Vue.js</span>
+                                <span class="tech-tag">Monaco Editor</span>
+                                <span class="tech-tag">Webpack</span>
+                                <span class="tech-tag">Prettier</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link-btn link-primary" target="_blank">
+                                    <i class="fab fa-github"></i> 查看代码
+                                </a>
+                                <a href="#" class="project-link-btn link-secondary" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i> 在线体验
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 加载更多 -->
+                <div class="text-center" style="margin-top: 3rem;">
+                    <button class="btn btn-secondary" id="loadMoreBtn">
+                        加载更多项目
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-text">
+                    <p>&copy; 2024 Goxia. 保留所有权利.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">首页</a>
+                    <a href="index.html#about">关于我</a>
+                    <a href="#">项目</a>
+                    <a href="index.html#contact">联系我</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+    <script>
+        // 项目筛选功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const projectCards = document.querySelectorAll('.project-card-detailed');
+            
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // 更新活跃标签
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 筛选项目
+                    projectCards.forEach(card => {
+                        const category = card.getAttribute('data-category');
+                        
+                        if (filter === 'all' || category === filter) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            // 加载更多按钮
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    // 这里可以实现加载更多项目的逻辑
+                    this.innerHTML = '<div class="loading"></div> 加载中...';
+                    
+                    setTimeout(() => {
+                        this.textContent = '没有更多项目了';
+                        this.disabled = true;
+                        this.style.opacity = '0.5';
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
